@@ -1,9 +1,22 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { CredentialsModule } from './credentials/credentials.module';
+import { NotesModule } from './notes/notes.module';
+import { CardsModule } from './cards/cards.module';
+import { EraseModule } from './erase/erase.module';
 
 @Module({
-  imports: [],
+  imports: [
+    AuthModule,
+    PrismaModule,
+    CredentialsModule,
+    NotesModule,
+    CardsModule,
+    EraseModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

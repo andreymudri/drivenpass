@@ -11,11 +11,12 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  password   String
   Credential Credential[]
-  Network    Network[]
+  Note       Note[]
+  Card       Card[]
 
   @@map("users")
 }
@@ -27,18 +28,31 @@ model Credential {
   url      String
   username String
   password String
-  userId Int
+  userId   Int
 
   @@map("credentials")
 }
 
-model Network {
-  id       Int    @id @default(autoincrement())
-  user     User   @relation(fields: [userId], references: [id])
-  title    String
-  network  String
-  password String
-  userId   Int
+model Note {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  title  String
+  notes  String
+  userId Int
 
-  @@map("networks")
+  @@map("notes")
+}
+
+model Card {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  title  String
+  number String
+  name   String
+  cvv    String
+  exp    String
+  type   String
+  userId Int
+
+  @@map("cards")
 }
