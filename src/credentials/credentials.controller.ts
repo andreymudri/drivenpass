@@ -12,7 +12,12 @@ import { CredentialsService } from './credentials.service';
 import { CredentialDto } from './dto';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @UseGuards(JwtGuard)
 @ApiTags('Credentials')
@@ -25,6 +30,7 @@ export class CredentialsController {
     status: HttpStatus.CREATED,
     description: 'Credential created',
   })
+  @ApiBearerAuth()
   create(@GetUser('id') userId: number, @Body() credentialDto: CredentialDto) {
     return this.credentialsService.create(userId, credentialDto);
   }
@@ -35,6 +41,7 @@ export class CredentialsController {
     status: HttpStatus.OK,
     description: 'returns an array of credentials',
   })
+  @ApiBearerAuth()
   findAll(@GetUser('id') userId: number) {
     return this.credentialsService.findAll(userId);
   }
@@ -45,6 +52,7 @@ export class CredentialsController {
     description: 'returns a single credential',
   })
   @ApiOperation({ summary: 'Returns a single credential' })
+  @ApiBearerAuth()
   findOne(@GetUser('id') userId: number, @Param('id') id: string) {
     return this.credentialsService.findOne(userId, +id);
   }
@@ -53,6 +61,7 @@ export class CredentialsController {
     status: HttpStatus.OK,
     description: 'deletes a single credential',
   })
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Deletes a single credential' })
   remove(@GetUser('id') userId: number, @Param('id') id: string) {
     return this.credentialsService.remove(userId, +id);

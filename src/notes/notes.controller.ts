@@ -12,7 +12,12 @@ import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/note.dto';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @UseGuards(JwtGuard)
 @Controller('notes')
@@ -26,6 +31,7 @@ export class NotesController {
     status: HttpStatus.CREATED,
     description: 'Note created',
   })
+  @ApiBearerAuth()
   create(@GetUser('id') userId: number, @Body() createNoteDto: CreateNoteDto) {
     return this.notesService.create(userId, createNoteDto);
   }
@@ -36,6 +42,7 @@ export class NotesController {
     status: HttpStatus.OK,
     description: 'returns an array of notes',
   })
+  @ApiBearerAuth()
   findAll(@GetUser('id') userId: number) {
     return this.notesService.findAll(userId);
   }
@@ -46,6 +53,7 @@ export class NotesController {
     status: HttpStatus.OK,
     description: 'returns a single note',
   })
+  @ApiBearerAuth()
   findOne(@GetUser('id') userId: number, @Param('id') id: string) {
     return this.notesService.findOne(userId, +id);
   }
@@ -56,6 +64,7 @@ export class NotesController {
     status: HttpStatus.OK,
     description: 'deletes a single note',
   })
+  @ApiBearerAuth()
   remove(@GetUser('id') userId: number, @Param('id') id: string) {
     return this.notesService.remove(userId, +id);
   }

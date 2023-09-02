@@ -10,6 +10,7 @@ import { EraseService } from './erase.service';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiProperty,
   ApiResponse,
@@ -30,6 +31,7 @@ export class EraseController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Invalid password',
   })
+  @ApiBearerAuth()
   async erase(@GetUser('id') id: number, @Body() password: string) {
     return await this.eraseService.erase(+id, password);
   }
