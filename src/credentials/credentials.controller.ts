@@ -3,43 +3,36 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CredentialsService } from './credentials.service';
-import { CreateCredentialDto } from './dto/create-credential.dto';
-import { UpdateCredentialDto } from './dto/update-credential.dto';
+import { CredentialDto } from './dto';
+import { JwtGuard } from '../auth/guard';
+import { GetUser } from '../auth/decorator';
 
+@UseGuards(JwtGuard)
 @Controller('credentials')
 export class CredentialsController {
   constructor(private readonly credentialsService: CredentialsService) {}
 
   @Post()
-  create(@Body() createCredentialDto: CreateCredentialDto) {
-    return this.credentialsService.create(createCredentialDto);
+  create(@GetUser('id') userId: number, @Body() credentialDto: CredentialDto) {
+    return this.credentialsService.create(userId, credentialDto);
   }
 
   @Get()
-  findAll() {
-    return this.credentialsService.findAll();
+  findAll(@GetUser('id') userId: number) {
+    return this.credentialsService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.credentialsService.findOne(+id);
+  findOne(@GetUser('id') userId: number, @Param('id') id: string) {
+    return this.credentialsService.findOne(userId, +id);
   }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCredentialDto: UpdateCredentialDto,
-  ) {
-    return this.credentialsService.update(+id, updateCredentialDto);
-  }
-
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.credentialsService.remove(+id);
+  remove(@GetUser('id') userId: number, @Param('id') id: string) {
+    return this.credentialsService.remove(userId, +id);
   }
 }

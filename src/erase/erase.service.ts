@@ -5,7 +5,6 @@ import * as argon from 'argon2';
 export class EraseService {
   constructor(private eraseRepository: EraseRepository) {}
   async erase(id: number, password: string) {
-    //TODO implement checks
     const pwCheck = await this.eraseRepository.pwCheck(id);
     const hashCheck = await argon.verify(pwCheck, password);
     if (!hashCheck) {
