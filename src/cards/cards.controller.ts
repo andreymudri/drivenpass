@@ -3,15 +3,14 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
 } from '@nestjs/common';
 import { CardsService } from './cards.service';
-import { CreateCardDto } from './dto/create-card.dto';
-import { UpdateCardDto } from './dto/update-card.dto';
+import { CreateCardDto } from './dto';
 import { JwtGuard } from '../auth/guard';
+import { GetUser } from '../auth/decorator';
 
 @UseGuards(JwtGuard)
 @Controller('cards')
@@ -19,27 +18,22 @@ export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
   @Post()
-  create(@Body() createCardDto: CreateCardDto) {
-    return this.cardsService.create(createCardDto);
+  create(@GetUser('id') userId: number, @Body() createCardDto: CreateCardDto) {
+    return this.cardsService.create(userId, createCardDto);
   }
 
   @Get()
-  findAll() {
-    return this.cardsService.findAll();
+  findAll(@GetUser() userId: number) {
+    return this.cardsService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cardsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
-    return this.cardsService.update(+id, updateCardDto);
+  findOne(@GetUser('id') userId: number, @Param('id') id: string) {
+    return this.cardsService.findOne(userId, +id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cardsService.remove(+id);
+  remove(@GetUser('id') userId: number, @Param('id') id: string) {
+    return this.cardsService.remove(userId, +id);
   }
 }

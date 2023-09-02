@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
-import { CreateNoteDto } from './dto/create-note.dto';
-import { UpdateNoteDto } from './dto/update-note.dto';
+import { NotesRepository } from './notes.repository';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateNoteDto } from './dto';
 
 @Injectable()
 export class NotesService {
-  create(createNoteDto: CreateNoteDto) {
-    return 'This action adds a new note';
+  constructor(private readonly notesRepository: NotesRepository) {}
+
+  async create(userId: number, createNoteDto: CreateNoteDto) {
+    const checkbytitle = await this.notesRepository.findByTitle(
+      userId,
+      createNoteDto.title,
+    );
+    if (checkbytitle) {
+      throw new ConflictException('Note already exists');
+    }
+    return await this.notesRepository.create(userId, createNoteDto);
   }
 
-  findAll() {
-    return `This action returns all notes`;
+  async findAll(userId: number) {
+    const notes = await this.notesRepository.findAll(userId);
+    if (notes.length === 0) {
+      return [];
+    }
+    return notes;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} note`;
+  async findOne(userId: number, id: number) {
+    const usercheck = await this.notesRepository.findOne(id);
+    if (!usercheck) {
+      throw new NotFoundException();
+    }
+    if (usercheck.userId !== userId) {
+      throw new ForbiddenException();
+    }
+    return usercheck;
   }
 
-  update(id: number, updateNoteDto: UpdateNoteDto) {
-    return `This action updates a #${id} note`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} note`;
+  async remove(userId: number, id: number) {
+    const usercheck = await this.notesRepository.findOne(id);
+    if (!usercheck) {
+      throw new NotFoundException();
+    }
+    if (usercheck.userId !== userId) {
+      throw new ForbiddenException();
+    }
+    return this.notesRepository.remove(userId, id);
   }
 }

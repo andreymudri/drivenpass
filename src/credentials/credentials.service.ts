@@ -52,15 +52,15 @@ export class CredentialsService {
 
   async findOne(userId: number, id: number) {
     const credential = await this.credentialsRepository.findOne(id);
+    if (!credential) {
+      throw new NotFoundException();
+    }
     if (credential) {
       if (userId !== credential.userId) {
         throw new ForbiddenException();
       }
       const uncryptedPw = this.cryptr.decrypt(credential.password);
       return { ...credential, password: uncryptedPw };
-    }
-    if (!credential) {
-      throw new NotFoundException();
     }
     return null;
   }

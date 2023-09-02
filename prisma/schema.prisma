@@ -44,15 +44,16 @@ model Note {
 }
 
 model Card {
-  id     Int    @id @default(autoincrement())
-  user   User   @relation(fields: [userId], references: [id])
-  title  String
-  number String
-  name   String
-  cvv    String
-  exp    String
-  type   String
-  userId Int
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  title    String
+  number   String
+  name     String
+  cvv      String
+  exp      String
+  type     String
+  password String
+  userId   Int
 
   @@map("cards")
 }
